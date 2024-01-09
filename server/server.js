@@ -1,42 +1,22 @@
 const express = require('express');
-const env = require('dotenv');
+const mongoose = require('mongoose');
+const MONGODB_USER = require('./.env');
+const MONGODB_PASS= require('./.env');
+
 const app = express();
-const mongoose = require("mongoose");
+const PORT = 3000;
+const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://${MONGODB_USER}:${MONGODB_PASS}@ecommerceproducts.mnos8la.mongodb.net/`
 
-
-const PORT = process.env.PORT || 3002;
-const MONGODB_URI = process.env.MONGODB_URI || `mongodb+srv://${process.env.MONGODB_USER}:${process.env.MONGODB_PASS}@cluster0.wtaxbyl.mongodb.net/${process.env.MONGODB_DB}?retryWrites=true&w=majority`;
-
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
-env.config();
-
-// mongodb connection
-// mongodb+srv://breannaschmidt12:vTehdZWXbfN0WUHN@cluster0.wtaxbyl.mongodb.net/?retryWrites=true&w=majority
-mongoose.connect(MONGODB_URI,
-	{
-		useNewUrlParser: true,
-		useUnifiedTopology: true
-	}
-).then( () => {console.log('Database is connected! :)')});
+// Connect to the database.
+mongoose.connect(MONGODB_URI, {
+  useNewUrlParser: true,
+  useFindAndModify: false
+});
 
 app.use(express.json());
-// app.use(require("./routes/api.js"))
-
-// app.get('/', (req, res, next) => {
-// 	res.status(200).json({
-// 		message: "Hello from server"
-// 	})
-// });
-
-
-// app.post('/products', (req, res, next) => {
-// 	res.status(200).json({
-// 		message: req.body
-// 	})
-// });
+app.use(express.urlencoded({extended: true}));
+app.use(express.static("client"));
 
 app.listen(PORT, () => {
-	console.log(`App running on port ${PORT}`)
-})
+	console.log(`Server is running at http://localhost:${PORT}`)
+});
